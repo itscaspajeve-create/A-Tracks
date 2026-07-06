@@ -10,11 +10,11 @@ const geistSans = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "PRU Consultant Dashboard",
+    default: "CM Advisory Hub",
     template: "%s · PRU Dash",
   },
   description:
-    "Personal client, pipeline and production dashboard for a PRU Life UK financial consultant",
+    "Client & production dashboard",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
