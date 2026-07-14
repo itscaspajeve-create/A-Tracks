@@ -28,7 +28,7 @@ export function AccountCard({ stats }: { stats: AccountStats }) {
               className="flex h-9 w-9 items-center justify-center rounded-xl text-white"
               style={{ backgroundColor: account.color }}
             >
-              <AccountTypeIcon type={account.type} className="h-4 w-4" />
+              <AccountTypeIcon type={account.type} className="h-[18px] w-[18px]" />
             </span>
             <div>
               <p className="font-medium leading-tight">{account.name}</p>
