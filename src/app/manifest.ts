@@ -2,14 +2,13 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "My PRU Dash",
-    short_name: "PRU Dash",
-    description:
-      "Personal client, pipeline and production dashboard for a PLUK financial consultant",
+    name: "Peso Tracker",
+    short_name: "Peso",
+    description: "Personal finance tracker — accounts, loans, budgets and reports",
     start_url: "/",
     display: "standalone",
     background_color: "#fcfcfb",
-    theme_color: "#af1e23",
+    theme_color: "#047857",
     orientation: "portrait",
     icons: [
       {

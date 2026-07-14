@@ -1,74 +1,93 @@
-import { PREMIUM_MODES } from "@/lib/constants";
-import type { Policy, PremiumMode } from "@/lib/types";
+const peso = new Intl.NumberFormat("en-PH", {
+  style: "currency",
+  currency: "PHP",
+  maximumFractionDigits: 2,
+  minimumFractionDigits: 2,
+});
 
-export function formatCurrency(
-  amount: number | null | undefined,
-  currency: string = "PHP",
-  compact = false
-): string {
-  if (amount == null) return "—";
-  return new Intl.NumberFormat("en-PH", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: compact ? 1 : 0,
-    notation: compact ? "compact" : "standard",
-  }).format(amount);
+const pesoWhole = new Intl.NumberFormat("en-PH", {
+  style: "currency",
+  currency: "PHP",
+  maximumFractionDigits: 0,
+});
+
+export function formatPeso(amount: number): string {
+  return peso.format(amount);
 }
 
-export function formatDate(date: string | null | undefined): string {
-  if (!date) return "—";
-  const d = new Date(date);
-  if (isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString("en-PH", {
-    year: "numeric",
+export function formatPesoWhole(amount: number): string {
+  return pesoWhole.format(amount);
+}
+
+export function formatPesoCompact(amount: number): string {
+  const abs = Math.abs(amount);
+  if (abs >= 1_000_000) return `₱${(amount / 1_000_000).toFixed(1)}M`;
+  if (abs >= 10_000) return `₱${(amount / 1_000).toFixed(1)}k`;
+  return pesoWhole.format(amount);
+}
+
+/** "2026-07" for a Date or today. */
+export function monthKey(d: Date = new Date()): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
+/** "2026-07-14" local date string. */
+export function todayISO(): string {
+  const d = new Date();
+  return `${monthKey(d)}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+/** "2026-07" -> "July 2026" */
+export function monthLabel(key: string): string {
+  const [y, m] = key.split("-").map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+}
+
+/** "2026-07" -> "Jul '26" */
+export function monthShort(key: string): string {
+  const [y, m] = key.split("-").map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+}
+
+export function shiftMonth(key: string, delta: number): string {
+  const [y, m] = key.split("-").map(Number);
+  return monthKey(new Date(y, m - 1 + delta, 1));
+}
+
+/** Trailing n month keys ending at `end` (inclusive), oldest first. */
+export function trailingMonths(n: number, end: string = monthKey()): string[] {
+  return Array.from({ length: n }, (_, i) => shiftMonth(end, i - n + 1));
+}
+
+export function formatDate(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
+    year: "numeric",
   });
 }
 
-/** Annualized Premium Equivalent for one policy. */
-export function policyApe(
-  policy: Pick<Policy, "premium_amount" | "premium_mode">
-): number {
-  const mode = PREMIUM_MODES.find((m) => m.value === policy.premium_mode);
-  return policy.premium_amount * (mode?.factor ?? 1);
+export function formatDateShort(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-export function premiumModeLabel(mode: PremiumMode): string {
-  return PREMIUM_MODES.find((m) => m.value === mode)?.label ?? mode;
-}
-
-export function ageFromDob(dob: string | null): number | null {
-  if (!dob) return null;
-  const birth = new Date(dob);
-  if (isNaN(birth.getTime())) return null;
-  const now = new Date();
-  let age = now.getFullYear() - birth.getFullYear();
-  const m = now.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) age--;
-  return age;
-}
-
-/**
- * Next anniversary of a policy from today, based on policy_anniversary
- * (falls back to issue_date). Returns null if neither date is set.
- */
-export function nextAnniversary(
-  policy: Pick<Policy, "policy_anniversary" | "issue_date">
-): Date | null {
-  const base = policy.policy_anniversary ?? policy.issue_date;
-  if (!base) return null;
-  const d = new Date(base);
-  if (isNaN(d.getTime())) return null;
+/** Given due days-of-month (e.g. 15 and 31), the next due date from today. */
+export function nextDueDate(dueDays: number[]): Date | null {
+  const days = dueDays.filter((d): d is number => !!d);
+  if (days.length === 0) return null;
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const next = new Date(today.getFullYear(), d.getMonth(), d.getDate());
-  if (next < today) next.setFullYear(next.getFullYear() + 1);
-  return next;
-}
-
-export function daysUntil(date: Date): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return Math.round((date.getTime() - today.getTime()) / 86_400_000);
+  const candidates: Date[] = [];
+  for (let offset = 0; offset < 2; offset++) {
+    const y = today.getFullYear();
+    const m = today.getMonth() + offset;
+    const lastDay = new Date(y, m + 1, 0).getDate();
+    for (const d of days) {
+      candidates.push(new Date(y, m, Math.min(d, lastDay)));
+    }
+  }
+  const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const future = candidates.filter((c) => c >= todayMid).sort((a, b) => +a - +b);
+  return future[0] ?? null;
 }
