@@ -43,7 +43,7 @@ const TXN_SELECT = `
   LEFT JOIN categories c ON c.id = t.category_id
 `;
 
-function buildWhere(f: TransactionFilters): { where: string; params: Record<string, unknown> } {
+export function buildWhere(f: TransactionFilters): { where: string; params: Record<string, unknown> } {
   const conds: string[] = [];
   const params: Record<string, unknown> = {};
   if (f.account) {

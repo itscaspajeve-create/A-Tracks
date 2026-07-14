@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getDb } from "./db";
 import { requireAuth } from "./auth";
 import { nextColor } from "./colors";
+import { buildWhere, type TransactionFilters } from "./queries";
 
 function revalidateAll() {
   for (const p of ["/", "/transactions", "/accounts", "/loans", "/budgets", "/reports", "/categories"]) {
@@ -54,6 +55,27 @@ export async function deleteTransaction(id: number) {
   requireAuth();
   getDb().prepare("DELETE FROM transactions WHERE id = ?").run(id);
   revalidateAll();
+}
+
+/** Delete a specific set of transactions by id (bulk "delete selected"). */
+export async function deleteTransactions(ids: number[]) {
+  requireAuth();
+  if (ids.length === 0) return { ok: true, deleted: 0 };
+  const db = getDb();
+  const placeholders = ids.map(() => "?").join(",");
+  const info = db.prepare(`DELETE FROM transactions WHERE id IN (${placeholders})`).run(...ids);
+  revalidateAll();
+  return { ok: true, deleted: info.changes };
+}
+
+/** Delete every transaction matching the current filters (bulk "delete all"). */
+export async function deleteFilteredTransactions(filters: TransactionFilters) {
+  requireAuth();
+  const db = getDb();
+  const { where, params } = buildWhere(filters);
+  const info = db.prepare(`DELETE FROM transactions AS t ${where}`).run(params);
+  revalidateAll();
+  return { ok: true, deleted: info.changes };
 }
 
 // ---------- Categories ----------

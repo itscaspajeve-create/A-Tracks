@@ -76,7 +76,20 @@ export default function TransactionsPage({
         />
       ) : (
         <>
-          <TransactionsTable rows={rows} accounts={accounts} categories={categories} />
+          <TransactionsTable
+            rows={rows}
+            accounts={accounts}
+            categories={categories}
+            total={total}
+            filters={{
+              account: filters.account,
+              category: filters.category,
+              from: filters.from,
+              to: filters.to,
+              q: filters.q,
+              direction: filters.direction,
+            }}
+          />
           {pageCount > 1 && (
             <div className="mt-4 flex items-center justify-center gap-3 text-sm">
               {page > 1 ? (

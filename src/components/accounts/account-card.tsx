@@ -9,6 +9,7 @@ import { formatPeso } from "@/lib/format";
 import type { AccountStats } from "@/lib/queries";
 import { AccountForm } from "./account-form";
 import { Sparkline } from "@/components/charts/sparkline";
+import { AccountTypeIcon } from "@/components/shared/account-type-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -24,10 +25,10 @@ export function AccountCard({ stats }: { stats: AccountStats }) {
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2.5">
             <span
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-sm font-semibold text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-xl text-white"
               style={{ backgroundColor: account.color }}
             >
-              {account.name.slice(0, 2).toUpperCase()}
+              <AccountTypeIcon type={account.type} className="h-4 w-4" />
             </span>
             <div>
               <p className="font-medium leading-tight">{account.name}</p>
