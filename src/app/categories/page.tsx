@@ -7,11 +7,13 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { getDb } from "@/lib/db";
 import { getCategories } from "@/lib/queries";
+import { requireAuth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Categories" };
 
 export default function CategoriesPage() {
+  requireAuth();
   const categories = getCategories();
   const counts: Record<number, number> = {};
   const rows = getDb()

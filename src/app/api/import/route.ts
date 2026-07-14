@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { getDb } from "@/lib/db";
 import { parseCsv } from "@/lib/csv";
 import { nextColor } from "@/lib/colors";
+import { isAuthed } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export const dynamic = "force-dynamic";
  * Unknown accounts/categories are created automatically.
  */
 export async function POST(req: NextRequest) {
+  if (!isAuthed()) return NextResponse.json({ error: "Not signed in." }, { status: 401 });
   const form = await req.formData();
   const file = form.get("file");
   if (!(file instanceof File)) {

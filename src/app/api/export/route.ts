@@ -1,9 +1,11 @@
 import { getDb } from "@/lib/db";
 import { toCsv } from "@/lib/csv";
+import { isAuthed } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  if (!isAuthed()) return new Response("Not signed in", { status: 401 });
   const db = getDb();
   const rows = db
     .prepare(

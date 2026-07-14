@@ -9,6 +9,7 @@ import { TransactionsTable } from "@/components/transactions/transactions-table"
 import { ImportExport } from "@/components/transactions/import-export";
 import { Button } from "@/components/ui/button";
 import { getAccounts, getCategories, getTransactions } from "@/lib/queries";
+import { requireAuth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Transactions" };
@@ -20,6 +21,7 @@ export default function TransactionsPage({
 }: {
   searchParams: Record<string, string | undefined>;
 }) {
+  requireAuth();
   const page = Math.max(1, Number(searchParams.page) || 1);
   const filters = {
     account: Number(searchParams.account) || undefined,

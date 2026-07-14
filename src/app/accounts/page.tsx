@@ -7,11 +7,13 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { trailingMonths } from "@/lib/format";
 import { getAccountStats } from "@/lib/queries";
+import { requireAuth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Accounts" };
 
 export default function AccountsPage() {
+  requireAuth();
   const stats = getAccountStats(trailingMonths(6));
   const active = stats.filter((s) => s.account.archived === 0);
   const archived = stats.filter((s) => s.account.archived === 1);

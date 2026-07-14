@@ -7,11 +7,13 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { StatCard } from "@/components/shared/stat-card";
 import { Button } from "@/components/ui/button";
 import { getAccounts, getLoans } from "@/lib/queries";
+import { requireAuth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Loans" };
 
 export default function LoansPage() {
+  requireAuth();
   const loans = getLoans();
   const accounts = getAccounts();
   const totalRemaining = loans.reduce((s, l) => s + l.remaining_balance, 0);

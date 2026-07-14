@@ -17,6 +17,7 @@ import {
   getSpendByAccount,
   getSpendByCategory,
 } from "@/lib/queries";
+import { requireAuth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,7 @@ export default function DashboardPage({
 }: {
   searchParams: { month?: string };
 }) {
+  requireAuth();
   const month = /^\d{4}-\d{2}$/.test(searchParams.month ?? "") ? searchParams.month! : monthKey();
   const from = `${month}-01`;
   const to = `${month}-31`;

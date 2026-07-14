@@ -1,10 +1,10 @@
-# Peso Tracker
+# A Tracks
 
 A local, single-user personal finance tracker that replaces a hand-maintained
 Google Sheet. Built with **Next.js (App Router) + TypeScript**, **Tailwind CSS
 + shadcn/ui**, **SQLite (better-sqlite3)** and **Recharts**. No cloud
-services, no accounts, no auth — everything lives in one SQLite file on your
-machine.
+services — everything, including your login password, lives in one SQLite
+file on your machine.
 
 ## Quick start
 
@@ -23,10 +23,27 @@ Debt/Installment, Income, Other).
 Other useful commands:
 
 ```bash
-npm run seed:reset   # wipe the database and reseed sample data from scratch
-npm run build        # production build
-npm start            # run the production build
+npm run seed:reset     # wipe the database and reseed sample data from scratch
+npm run reset-password # forgot your password? clear it and set a new one
+npm run build          # production build
+npm start              # run the production build
 ```
+
+## Sign in / sign out
+
+The first time you open the app it asks you to **create a password** (stored
+salted-and-hashed in your local SQLite file — nothing leaves your machine).
+After that you sign in with it; sessions last 30 days. **Log out** lives at
+the bottom of the sidebar on desktop and under **More** on mobile. Forgot the
+password? `npm run reset-password` clears it so you can set a new one — your
+data is untouched.
+
+## Custom app icon
+
+Click the app icon at the top of the sidebar (or **More → Change app icon**
+on mobile) to upload your own square image (PNG/JPG/WebP/GIF/SVG, up to
+2 MB). It replaces the icon in the sidebar and on the sign-in screen; use
+**Reset** in the same dialog to go back to the default.
 
 ## Using it from your phone
 

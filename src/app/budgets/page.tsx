@@ -3,11 +3,13 @@ import { MonthPicker } from "@/components/shared/month-picker";
 import { BudgetRow } from "@/components/budgets/budget-row";
 import { monthKey, monthLabel } from "@/lib/format";
 import { getBudgets, getCategories, getSpendByCategory } from "@/lib/queries";
+import { requireAuth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Budgets" };
 
 export default function BudgetsPage({ searchParams }: { searchParams: { month?: string } }) {
+  requireAuth();
   const month = /^\d{4}-\d{2}$/.test(searchParams.month ?? "") ? searchParams.month! : monthKey();
   const categories = getCategories().filter((c) => c.name !== "Income");
   const budgets = new Map(getBudgets().map((b) => [b.category_id, b.monthly_limit]));

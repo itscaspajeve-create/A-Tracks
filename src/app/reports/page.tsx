@@ -22,6 +22,7 @@ import {
   type NamedTotal,
 } from "@/lib/queries";
 import { cn } from "@/lib/utils";
+import { requireAuth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Reports" };
@@ -70,6 +71,7 @@ function TopList({ title, items }: { title: string; items: NamedTotal[] }) {
 }
 
 export default function ReportsPage({ searchParams }: { searchParams: { range?: string } }) {
+  requireAuth();
   const rangeKey = RANGES.some((r) => r.key === searchParams.range) ? searchParams.range! : "6";
   const months = trailingMonths(Number(rangeKey));
   const from = `${months[0]}-01`;

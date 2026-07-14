@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getDb } from "./db";
+import { requireAuth } from "./auth";
 import { nextColor } from "./colors";
 
 function revalidateAll() {
@@ -18,6 +19,7 @@ function num(v: FormDataEntryValue | null): number {
 // ---------- Transactions ----------
 
 export async function saveTransaction(formData: FormData) {
+  requireAuth();
   const db = getDb();
   const id = formData.get("id");
   const values = {
@@ -49,6 +51,7 @@ export async function saveTransaction(formData: FormData) {
 }
 
 export async function deleteTransaction(id: number) {
+  requireAuth();
   getDb().prepare("DELETE FROM transactions WHERE id = ?").run(id);
   revalidateAll();
 }
@@ -56,6 +59,7 @@ export async function deleteTransaction(id: number) {
 // ---------- Categories ----------
 
 export async function saveCategory(formData: FormData) {
+  requireAuth();
   const db = getDb();
   const id = formData.get("id");
   const name = String(formData.get("name") || "").trim();
@@ -81,6 +85,7 @@ export async function saveCategory(formData: FormData) {
 }
 
 export async function deleteCategory(id: number) {
+  requireAuth();
   const db = getDb();
   db.prepare("UPDATE transactions SET category_id = NULL WHERE category_id = ?").run(id);
   db.prepare("DELETE FROM budgets WHERE category_id = ?").run(id);
@@ -91,6 +96,7 @@ export async function deleteCategory(id: number) {
 // ---------- Accounts ----------
 
 export async function saveAccount(formData: FormData) {
+  requireAuth();
   const db = getDb();
   const id = formData.get("id");
   const name = String(formData.get("name") || "").trim();
@@ -116,6 +122,7 @@ export async function saveAccount(formData: FormData) {
 }
 
 export async function setAccountArchived(id: number, archived: boolean) {
+  requireAuth();
   getDb().prepare("UPDATE accounts SET archived = ? WHERE id = ?").run(archived ? 1 : 0, id);
   revalidateAll();
 }
@@ -123,6 +130,7 @@ export async function setAccountArchived(id: number, archived: boolean) {
 // ---------- Loans ----------
 
 export async function saveLoan(formData: FormData) {
+  requireAuth();
   const db = getDb();
   const id = formData.get("id");
   const values = {
@@ -155,12 +163,14 @@ export async function saveLoan(formData: FormData) {
 }
 
 export async function deleteLoan(id: number) {
+  requireAuth();
   getDb().prepare("DELETE FROM loans WHERE id = ?").run(id);
   revalidateAll();
 }
 
 /** Record a payment: decrement the loan balance and log a matching transaction. */
 export async function recordLoanPayment(formData: FormData) {
+  requireAuth();
   const db = getDb();
   const loanId = num(formData.get("loan_id"));
   const amount = Math.abs(num(formData.get("amount")));
@@ -195,6 +205,7 @@ export async function recordLoanPayment(formData: FormData) {
 // ---------- Budgets ----------
 
 export async function setBudget(categoryId: number, monthlyLimit: number) {
+  requireAuth();
   const db = getDb();
   if (monthlyLimit > 0) {
     db.prepare(

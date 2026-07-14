@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Sidebar } from "@/components/layout/sidebar";
-import { BottomNav } from "@/components/layout/bottom-nav";
+import { AppShell } from "@/components/layout/app-shell";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -12,14 +11,14 @@ const geistSans = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "Peso Tracker",
-    template: "%s · Peso Tracker",
+    default: "A Tracks",
+    template: "%s · A Tracks",
   },
   description: "Personal finance tracker — accounts, loans, budgets and reports",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Peso Tracker",
+    title: "A Tracks",
   },
 };
 
@@ -48,13 +47,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
       <body className={`${geistSans.variable} font-sans antialiased`}>
-        <div className="min-h-dvh">
-          <Sidebar />
-          <main className="pb-24 pt-4 md:ml-60 md:pb-10 md:pt-8">
-            <div className="container max-w-6xl">{children}</div>
-          </main>
-          <BottomNav />
-        </div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

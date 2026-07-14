@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "node scripts/seed.js",
-    "seed:reset": "node scripts/seed.js --reset"
+    "seed:reset": "node scripts/seed.js --reset",
+    "reset-password": "node scripts/reset-password.js"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.18",

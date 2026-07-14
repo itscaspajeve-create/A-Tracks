@@ -46,3 +46,13 @@ CREATE TABLE IF NOT EXISTS budgets (
   category_id INTEGER NOT NULL UNIQUE REFERENCES categories(id) ON DELETE CASCADE,
   monthly_limit REAL NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  token TEXT PRIMARY KEY,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
